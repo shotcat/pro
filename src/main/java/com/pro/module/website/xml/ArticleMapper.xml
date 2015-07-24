@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.module.website.mapper.ArticleMapper" >
+  
+  <resultMap type="com.pro.module.website.entity.Article" id="articleMap">
+   <id column="id" property="id"/>
+  	<result column="title" property="title"/>
+  	<result column="content" property="content"/>
+  	<result column="state" property="state"/>
+  	<result column="type" property="type"/>
+  	<result column="image" property="image"/>
+  	<result column="sort" property="sort"/>
+  	<result column="remark" property="remark"/>
+  	<result column="source" property="source"/>
+  	<result column="create_time" property="createTime"/>
+  	<result column="update_time" property="updateTime"/>
+  </resultMap>
+ <select id="findArticleListByState" resultMap="articleMap">
+  	 select * from t_article  
+  	 <where>
+  	 <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and update_time &lt;=#{endTime}
+  	 </if>
+  	  <if test="type != null">
+  	  and type=#{type}
+  	 </if>
+  	 <if test="title != null">
+  	  and title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+  	  order by update_time desc  limit #{start},#{rows}
+  </select>
+ <select id="findArticleCount" resultType="java.lang.Integer">
+  	 select count(*) from t_article  
+  	 <where>
+  	 <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="type != null">
+  	  and type=#{type}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and update_time &lt;=#{endTime}
+  	 </if>
+  	 <if test="title != null">
+  	  and title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+  </select>
+  
+  
+  <update id="updateArticle">
+  
+   UPDATE t_article
+   <set>
+	 `title` = #{title},
+	`content` = #{content},
+	`state` = #{state},
+	`type` = #{type},
+	`image` = #{image},
+	`update_time` =now(),
+	`sort` = #{sort},
+	`remark` = #{remark},
+	`source` = #{source},
+   </set>
+   
+   <where>
+     id = #{id}
+   </where>
+  </update>
+
+
+<insert id="saveArticle">
+
+  INSERT INTO t_article
+  (
+	`title`,
+	`content`,
+	`state`,
+	`type`,
+	`image`,
+	`create_time`,
+	`update_time`,
+	`sort`,
+	`remark`,
+	`source`
+  ) VALUES(
+  	
+  	#{title},
+  	#{content},
+  	#{state},
+  	#{type},
+  	#{image},
+  	now(),
+  	now(),
+  	#{sort},
+  	#{remark},
+  	#{source}
+  )
+  
+</insert>
+<select id="findArticleType" resultMap="articleMap">
+ select * from t_article  
+ where type = #{type} and state =0
+ order by update_time desc, sort
+ limit #{start},#{end}
+	
+</select>
+
+<select id="findArticleById" resultMap="articleMap">
+
+select * from t_article  
+ where id = #{id}
+</select>
+<select id="findAboutUs" resultMap="articleMap">
+
+select * from t_article  
+ where type = 3  order by update_time desc limit 0,1
+</select>
+
+<select id="findArticleList" resultMap="articleMap">
+
+ SELECT * FROM t_article WHERE type = #{type} And state = 0 
+ order by update_time desc,sort asc
+ limit #{start},#{size}
+</select>
+
+<select id="findArticleCountByType" resultType="java.lang.Integer">
+	SELECT COUNT(*) FROM t_article WHERE type = #{type}
+</select>
+</mapper>

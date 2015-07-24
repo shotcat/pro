@@ -1,0 +1,28 @@
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+    <description>Spring Security Authorization Tag Library</description>
+
+    <tlib-version>3.2</tlib-version>
+    <short-name>security</short-name>
+    <uri>http://blog.sina.com.cn/dodoyota/security/tags</uri>
+    
+       <tag>
+        <description>
+           authenticated current user
+        </description>
+        <name>authenticated</name>
+        <tag-class>com.pro.sys.common.web.context.taglib.SecureurityAuthenticatedUserTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+       <tag>
+        <description>
+          notAuthenticated user
+        </description>
+        <name>notAuthenticated</name>
+        <tag-class>com.pro.sys.common.web.context.taglib.SecureurityNotAuthenticatedUserTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    
+    </taglib>

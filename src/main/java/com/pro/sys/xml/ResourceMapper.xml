@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.sys.mapper.ResourceMapper" >
+  <resultMap id="resourceMap" type="com.pro.sys.entity.Resource" >
+    <id column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <result column="resource_name" property="resourceName"  />
+    <result column="type" property="type" />
+    <result column="parent_id" property="parentId"  />
+    <result column="icon" property="icon" />
+    <result column="sort" property="sort"  />
+    <result column="state" property="state" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="url" property="url" />
+    <result column="target" property="target" />
+  </resultMap>
+  
+  <select id="findAllResourceList" resultMap="resourceMap">
+   	select * from s_resource 
+   	
+   	<if test="isEnable == true">
+   	  where state = 0
+   	</if>
+  </select>
+  
+  <select id="findDefaultResourceIdListByRoleId" resultType="java.lang.Integer">
+  
+    SELECT resource_id from s_role_resource where role_id = #{roleId}
+  </select>
+  <select id="findAllResource" resultMap="resourceMap">
+     SELECT * FROM s_resource 
+  </select>
+  
+  <delete id="deleteRoleByUserId">
+    DELETE FROM s_role_resource where role_id = #{roleId}
+  </delete>
+  
+  <insert id="createUserRoleByUserId">
+      insert into s_role_resource 
+   (role_id,resource_id) values
+   <foreach collection="resourceIdList" item="resourceId"   separator=",">
+   		(#{roleId},#{resourceId} )
+   </foreach>
+  </insert>
+  
+  <select id="findResourceListByParentId" resultMap="resourceMap">
+    SELECT * FROM s_resource 
+    <where>
+      <if test="parentId == null">
+        AND parent_id is NULL
+      </if>
+       <if test="parentId != null">
+        AND parent_id =#{parentId}
+      </if>
+    </where>
+  </select>
+  <select id="findResourceById" resultMap="resourceMap">
+    SELECT * FROM s_resource 
+    <where>
+       and resource_id = #{id}
+    </where>
+  </select>
+  
+  <insert id="addResource">
+  
+   INSERT INTO s_resource (resource_name,url,state,create_time,update_time,parent_id,type)
+   VALUES(#{resourceName},#{url},#{state},now(),now(),#{parentId},#{type})
+  </insert>
+  
+  <update id="editResource">
+  
+   UPDATE s_resource 
+   <set>
+   	 resource_name = #{resourceName},
+   	 url =#{url},
+   	 state =#{state},
+   	 type = #{type},
+   	 update_time= now(),
+   	 parent_id = #{parentId}
+   </set>
+   <where>
+      resource_id=#{resourceId} 
+   </where>
+  </update>
+</mapper>

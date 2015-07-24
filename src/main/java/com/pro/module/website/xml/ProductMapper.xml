@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.module.website.mapper.ProductMapper" >
+  
+  <resultMap type="com.pro.module.website.entity.Product" id="productMap">
+   <id column="id" property="id"/>
+  	<result column="title" property="title"/>
+  	<result column="remark" property="remark"/>
+  	<result column="state" property="state"/>
+  	<result column="type" property="type"/>
+  	<result column="state" property="state"/>
+  	<result column="sort" property="sort"/>
+  	<result column="content" property="content"/>
+  	<result column="image" property="image"/>
+  	<result column="type_name" property="typeName"/>
+  	<result column="create_time" property="createTime"/>
+  	<result column="update_time" property="updateTime"/>
+  </resultMap>
+ 
+ <resultMap type="com.pro.module.website.entity.ProductType" id="productTypeMap">
+  <id column="id" property="id"/>
+	 <result column="type_name" property="typeName"/>
+	 <result column="state" property="state"/>
+	 <result column="create_time" property="createTime"/>
+	 <result column="updateTime" property="updateTime"/>
+ </resultMap>
+ 
+ <select id="findProductListByState" resultMap="productMap">
+ 
+  select a.*,b.type_name  from t_product  a,t_product_type b
+  <where>
+    AND a.type = b.id
+    
+  	 <if test="state != null">
+  	  and a.state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and a.update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and a.update_time &lt;=#{endTime}
+  	 </if>
+  	  <if test="type != null">
+  	  and a.type=#{type}
+  	 </if>
+  	 <if test="title != null">
+  	  and a.title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+  	  order by a.update_time desc  limit #{start},#{rows}
+ </select>
+ 
+ <select id="findPrductCount" resultType="java.lang.Integer">
+ 	
+  select COUNT(*) from t_product  
+  <where>
+  	 <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and update_time &lt;=#{endTime}
+  	 </if>
+  	  <if test="type != null">
+  	  and type=#{type}
+  	 </if>
+  	 <if test="title != null">
+  	  and title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+ 
+ </select>
+ 
+ <select id="findAllProductType" resultMap="productTypeMap">
+ 
+ 	select * from t_product_type 
+ 	order by update_time desc
+ </select>
+ 
+ <insert id="saveProduct">
+ INSERT INTO t_product
+ (
+ `title`,
+`remark`,
+`type`,
+`content`,
+`state`,
+`sort`,
+`create_time`,
+`update_time`,
+`image`
+ )
+ VALUES(
+ #{title},
+ #{remark},
+ #{type},
+ #{content},
+ #{state},
+ #{sort},
+ now(),
+ now(),
+ #{image}
+ )
+ </insert>
+ 
+ 
+ <update id="updateProduct">
+ 
+ UPDATE t_product
+ 
+ <set>
+   `title`=#{title},
+`remark`=#{remark},
+`type`=#{type},
+`content`=#{content},
+`state`=#{state},
+`sort`=#{sort},
+`update_time`=now(),
+`image`=#{image}
+   
+ </set>
+ <where>
+   AND id =#{id}
+ </where>
+ 
+ </update>
+ 
+ <select id="findProductByIdAndType" resultMap="productMap">
+ 
+  SELECT * FROM t_product WHERE id = #{id} and type = #{type}
+ </select>
+</mapper>

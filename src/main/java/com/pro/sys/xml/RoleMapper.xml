@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.sys.mapper.RoleMapper" >
+  <resultMap id="roleMap" type="com.pro.sys.entity.Role" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName"  />
+    <result column="state" property="state"  />
+    <result column="des" property="des" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+  </resultMap>
+ 
+ <select id="findAllRole" resultMap="roleMap">
+   select * from s_role
+ </select>
+ <select id="findRoleIdListByUserId"    resultType="Integer">
+    select role_id from s_user_role where user_id = #{userId}
+ </select>
+ 
+ <delete id="deleteRoleByUserId">
+  	 delete from s_user_role where user_id=#{userId}
+ </delete>
+ 
+ <insert id="createUserRoleByUserId">
+   insert into s_user_role 
+   (user_id,role_id) values
+   <foreach collection="roleIdList" item="roleId"   separator=",">
+   		( #{userId} ,#{roleId} )
+   </foreach>
+ </insert>
+ 
+ <select id="findRoleList" resultMap="roleMap">
+   SELECT * FROM s_role 
+   <where>
+      <if test="startTime != null">
+  	  and create_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and create_time &lt;=#{endTime}
+  	 </if>
+  	  <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="roleName != null">
+  	  and role_name  like CONCAT('%',#{roleName},'%')
+  	 </if> 
+   
+   </where>
+    order by create_time desc 
+   limit #{resultStart},#{rows}
+ 
+ </select>
+ 
+ <select id="findRoleCount" resultType="java.lang.Integer">
+ 
+ 	 select count(*) from s_role 
+ 	 
+ 	 <where>
+ 	  <if test="startTime != null">
+  	  and create_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and create_time &lt;=#{endTime}
+  	 </if>
+  	  <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="roleName != null">
+  	  and role_name  like CONCAT('%',#{roleName},'%')
+  	 </if>
+ 	 
+ 	 
+ 	 </where>
+  	 
+ </select>
+ 
+ <select id="checkRoleName" resultMap="roleMap">
+    select * from s_role where role_name = #{roleName}
+    <if test="roleId != null">
+      and role_id &lt;&gt;#{roleId}
+    </if>
+ </select>
+ 
+ <insert id="addRole" >
+ 
+  INSERT INTO 
+  s_role 
+  (role_name,state,des,create_time,update_time)
+  
+  VALUES(
+     #{roleName},
+     #{state},
+     #{des},
+     now(),
+     now()
+  )
+ </insert>
+ <update id="editRole">
+ 
+ UPDATE s_role 
+ 
+ <set>
+     role_name = #{roleName},
+     state = #{state},
+     
+    <if test="des != null">
+      des = #{des},
+    </if>
+    
+    update_time = now()
+    
+ </set>
+ 
+ <where>
+	role_id = #{roleId}
+ </where>
+ </update>
+</mapper>

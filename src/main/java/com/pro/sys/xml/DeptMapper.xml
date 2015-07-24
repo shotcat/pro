@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.sys.mapper.DeptMapper" >
+  <resultMap id="deptMap" type="com.pro.sys.entity.Dept" >
+    <id column="dept_id" property="deptId" jdbcType="INTEGER" />
+    <result column="dept_name" property="deptName"  />
+    <result column="state" property="state"  />
+    <result column="des" property="des" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="parent_id" property="parentId"/>
+    
+  </resultMap>
+ 
+
+</mapper>

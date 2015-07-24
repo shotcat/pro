@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 配置数据库方言  目前只有mysql和oracle两种-->
+	<properties>
+		<property name="dialect" value="mysql"/>
+	</properties>
+	
+	<!-- 配置mysql分页拦截器 start -->
+	<!-- com.xxyd.mybatis.interceptor.PaginationInterceptor 来自于jar包mybatis-pager-1.0.0.jar -->
+	<plugins>
+		<plugin interceptor="com.xxyd.mybatis.interceptor.PaginationInterceptor"></plugin>
+	</plugins>
+
+</configuration>		
+			

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.sys.mapper.AccountMapper" >
+  <resultMap id="resourceMap" type="com.pro.sys.entity.Resource" >
+    <id column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <result column="resource_name" property="resourceName"  />
+    <result column="type" property="type" />
+    <result column="parent_id" property="parentId"  />
+    <result column="icon" property="icon" />
+    <result column="sort" property="sort"  />
+    <result column="state" property="state" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="url" property="url" />
+    <result column="target" property="target" />
+  </resultMap>
+  
+    <resultMap id="roleMap" type="com.pro.sys.entity.Role" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName"  />
+    <result column="state" property="state"  />
+    <result column="des" property="des" />
+  </resultMap>
+ 
+   <resultMap id="roleResourceMap" type="com.pro.sys.entity.RoleResource" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" />
+    <result column="resource_id" property="resourceId"  />
+  </resultMap>
+  
+    <resultMap id="userMap" type="com.pro.sys.entity.User" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName"  />
+    <result column="password" property="password" />
+    <result column="email" property="email" />
+    <result column="state" property="state"  />
+    <result column="nick_name" property="nickName"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="age" property="age"  />
+    <result column="sex" property="sex" />
+    <result column="mobile" property="mobile" />
+    <result column="address" property="address" />
+  </resultMap>
+  
+   <resultMap id="userRoleMap" type="com.pro.sys.entity.UserRole" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId"  />
+    <result column="role_id" property="roleId" />
+  </resultMap>
+  
+  <select id="findRoleListByUserId" resultMap="roleMap">
+		SELECT DISTINCT r.* 
+			FROM s_user u 
+		INNER JOIN s_user_role ur 
+		ON u.user_id = ur.user_id 
+		INNER JOIN s_role r 
+		ON ur.role_id = r.role_id
+	   WHERE u.state =0 
+	 	AND r.state =0 
+	 	AND u.user_id =#{userId}
+	</select>
+	<select id="findResourceListByRoleId" resultMap="resourceMap">
+		SELECT DISTINCT rs.* FROM s_user u 
+		INNER JOIN s_user_role ur ON u.user_id = ur.user_id
+		 INNER JOIN s_role r ON ur.role_id = r.role_id
+		INNER JOIN s_role_resource rr 
+		ON r.role_id = rr.role_id
+		 INNER JOIN s_resource rs ON rr.resource_id = rs.resource_id
+	WHERE 
+	u.state =0 AND r.state =0 AND rs.state =0 And r.role_id=#{roleId}
+	</select>
+	
+	<select id="findMenuByModuleIdAndUserId" resultMap="resourceMap">
+	SELECT DISTINCT rs.* FROM s_user u 
+	INNER JOIN s_user_role ur ON u.user_id = ur.user_id 
+	INNER JOIN s_role r ON ur.role_id = r.role_id 
+	INNER JOIN s_role_resource rr ON r.role_id = rr.role_id
+	INNER JOIN s_resource rs ON rr.resource_id = rs.resource_id 
+	WHERE u.state = 0 AND r.state = 0 AND rs.state =0 AND rs.type=1 
+	AND  u.user_id = #{userId} AND rs.parent_id = #{moduleId}
+	</select>
+	
+	<select id="findModuleListUserId" resultMap="resourceMap">
+	
+	SELECT DISTINCT rs.* FROM s_user u 
+	INNER JOIN s_user_role ur ON u.user_id = ur.user_id 
+	INNER JOIN s_role r ON ur.role_id = r.role_id 
+	INNER JOIN s_role_resource rr ON r.role_id = rr.role_id
+	INNER JOIN s_resource rs ON rr.resource_id = rs.resource_id 
+	WHERE u.state = 0 AND r.state = 0 AND rs.state =0 AND rs.type=0
+	AND  u.user_id = #{userId} AND rs.parent_id is NULL
+	</select>
+	
+	<select id="findAllRoles" resultMap="roleMap">
+	SELECT * FROM s_role r 
+	INNER JOIN s_user_role ur 
+	ON 
+		r.role_id = ur.role_id 
+	WHERE 
+		r.state =0
+	</select>
+  
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pro.module.website.mapper.CarouselMapper" >
+  
+  <resultMap type="com.pro.module.website.entity.Carousel" id="carouselMap">
+   <id column="id" property="id"/>
+  	<result column="title" property="title"/>
+  	<result column="state" property="state"/>
+  	<result column="des" property="des"/>
+  	<result column="sort" property="sort"/>
+  	<result column="url" property="url"/>
+  	<result column="image_url" property="ImageUrl"/>
+  	<result column="create_time" property="createTime"/>
+  	<result column="update_time" property="updateTime"/>
+  </resultMap>
+ <select id="findCarouselListByState" resultMap="carouselMap">
+  	 select * from t_carousel  
+  	 <where>
+  	 <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and update_time &lt;=#{endTime}
+  	 </if>
+  	 <if test="title != null">
+  	  and title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+  	  order by update_time desc  limit #{start},#{rows}
+  </select>
+ <select id="findCarouselCount" resultType="java.lang.Integer">
+  	 select count(*) from t_carousel  
+  	 <where>
+  	 <if test="state != null">
+  	  and state =#{state}
+  	 </if>
+  	 <if test="startTime != null">
+  	  and update_time &gt;=#{startTime}
+  	 </if>
+  	  <if test="endTime != null">
+  	  and update_time &lt;=#{endTime}
+  	 </if>
+  	 <if test="title != null">
+  	  and title like CONCAT('%',#{title},'%')
+  	 </if> 
+  	 </where>
+  	  order by update_time desc  
+  </select>
+  
+  <insert id="saveCarousel">
+    INSERT INTO t_carousel
+    (  
+    `title`,
+	`state`,
+	`des`,
+	`sort`,
+	`create_time`,
+	`update_time`,
+	`url`,
+	`image_url`
+		)
+    VALUES(
+      #{title},
+      #{state},
+      #{des},
+      #{sort},
+      now(),
+      now(),
+      #{url},
+      #{imageUrl}
+    )
+  
+  
+  </insert>
+  
+  <update id="updateCarousel">
+    
+    UPDATE t_carousel
+    
+    <set>
+      <if test="title != null and title != ''">
+      	title = #{title},
+      </if>
+        
+      	state = #{state},
+      	des = #{des},
+      	sort = sort,
+      	update_time = now(),
+      	url = #{url},
+      	image_url = #{imageUrl}
+    </set>
+  
+  <where>
+     and id = #{id}
+  </where>
+  </update>
+  
+  <select id="findAllEnableCarousel" resultMap="carouselMap">
+  
+  select * from t_carousel  where state = 0 order by sort asc ,update_time desc
+  </select>
+</mapper>
